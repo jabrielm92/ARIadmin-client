@@ -15,6 +15,12 @@ const mockClientCredentials = [
     email: 'info@premierlegal.com',
     password: 'client123',
     businessName: 'Premier Legal Services'
+  },
+  {
+    clientId: 'test-client-demo',
+    email: 'client@example.com',
+    password: 'client123',
+    businessName: 'Demo Business'
   }
 ];
 
