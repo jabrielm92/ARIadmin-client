@@ -6,15 +6,23 @@ import ClientLayout from '@/components/ClientLayout';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Play, Download, FileText, Phone, Clock, CheckCircle, XCircle } from 'lucide-react';
+import { Phone, PhoneOff, Mic, MicOff, PhoneCall, Settings } from 'lucide-react';
+import Vapi from '@vapi-ai/web';
 
-export default function ClientAIReceptionist() {
+export default function AIReceptionist() {
   const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState(null);
-  const [callHistory, setCallHistory] = useState([]);
+  const [vapiClient, setVapiClient] = useState(null);
+  const [isCallActive, setIsCallActive] = useState(false);
+  const [isMuted, setIsMuted] = useState(false);
+  const [isConnecting, setIsConnecting] = useState(false);
+  const [messages, setMessages] = useState([]);
+  const [assistantId, setAssistantId] = useState('');
+  const [recentCalls, setRecentCalls] = useState([]);
 
   useEffect(() => {
     const token = localStorage.getItem('clientToken');
@@ -28,22 +36,110 @@ export default function ClientAIReceptionist() {
     try {
       const userData = JSON.parse(userStr);
       setUser(userData);
-      fetchCallHistory(userData.id);
       setLoading(false);
+      
+      // Fetch recent calls
+      fetchRecentCalls(userData.id);
     } catch (error) {
       router.push('/client/login');
     }
   }, [router]);
 
-  const fetchCallHistory = async (clientId) => {
+  useEffect(() => {
+    const publicKey = process.env.NEXT_PUBLIC_VAPI_PUBLIC_KEY;
+    if (!publicKey) {
+      console.error('Vapi public key not found');
+      return;
+    }
+
+    const vapi = new Vapi(publicKey);
+    
+    vapi.on('call-start', () => {
+      setIsCallActive(true);
+      setIsConnecting(false);
+      setMessages([]);
+    });
+
+    vapi.on('call-end', () => {
+      setIsCallActive(false);
+      setIsConnecting(false);
+      // Refresh calls after call ends
+      if (user) {
+        setTimeout(() => fetchRecentCalls(user.id), 2000);
+      }
+    });
+
+    vapi.on('message', (message) => {
+      if (message.type === 'transcript' && message.transcript) {
+        setMessages(prev => [...prev, {
+          role: message.role || 'assistant',
+          content: message.transcript
+        }]);
+      }
+    });
+
+    vapi.on('error', (error) => {
+      console.error('Vapi error:', error);
+      setIsCallActive(false);
+      setIsConnecting(false);
+    });
+
+    setVapiClient(vapi);
+
+    return () => {
+      if (vapi) {
+        vapi.stop();
+      }
+    };
+  }, [user]);
+
+  const fetchRecentCalls = async (clientId) => {
     try {
       const response = await fetch(`/api/client/calls?clientId=${clientId}`);
       const data = await response.json();
       if (data.success) {
-        setCallHistory(data.calls || []);
+        setRecentCalls(data.calls.slice(0, 5));
       }
     } catch (error) {
       console.error('Error fetching calls:', error);
+    }
+  };
+
+  const startCall = async () => {
+    if (!vapiClient) return;
+    
+    // Check if assistant ID is configured
+    const configuredAssistantId = assistantId || process.env.NEXT_PUBLIC_VAPI_ASSISTANT_ID;
+    
+    if (!configuredAssistantId) {
+      alert('Please configure your Assistant ID in settings first!');
+      return;
+    }
+    
+    setIsConnecting(true);
+    
+    try {
+      await vapiClient.start(configuredAssistantId, {
+        metadata: {
+          clientId: user?.id
+        }
+      });
+    } catch (error) {
+      console.error('Failed to start call:', error);
+      setIsConnecting(false);
+    }
+  };
+
+  const stopCall = () => {
+    if (vapiClient) {
+      vapiClient.stop();
+    }
+  };
+
+  const toggleMute = () => {
+    if (vapiClient) {
+      vapiClient.setMuted(!isMuted);
+      setIsMuted(!isMuted);
     }
   };
 
@@ -55,281 +151,183 @@ export default function ClientAIReceptionist() {
     );
   }
 
-  // Mock call history
-  const mockCalls = callHistory.length > 0 ? callHistory : [
-    {
-      id: 1,
-      callerName: 'John Smith',
-      callerNumber: '+1-555-0123',
-      duration: '3m 45s',
-      outcome: 'appointment-booked',
-      timestamp: '2 hours ago',
-      hasRecording: true,
-      hasTranscript: true,
-      sentiment: 'positive'
-    },
-    {
-      id: 2,
-      callerName: 'Jane Doe',
-      callerNumber: '+1-555-0456',
-      duration: '2m 15s',
-      outcome: 'question-answered',
-      timestamp: '5 hours ago',
-      hasRecording: true,
-      hasTranscript: true,
-      sentiment: 'neutral'
-    },
-    {
-      id: 3,
-      callerName: 'Bob Johnson',
-      callerNumber: '+1-555-0789',
-      duration: '5m 30s',
-      outcome: 'transferred',
-      timestamp: '1 day ago',
-      hasRecording: true,
-      hasTranscript: true,
-      sentiment: 'positive'
-    }
-  ];
-
-  const stats = {
-    totalCalls: 42,
-    avgDuration: '3m 15s',
-    appointmentsBooked: 15,
-    callResolutionRate: '85%',
-    missedCalls: 3,
-    callbackRequests: 2
-  };
-
-  const getOutcomeColor = (outcome) => {
-    switch (outcome) {
-      case 'appointment-booked':
-        return 'bg-green-500';
-      case 'question-answered':
-        return 'bg-blue-500';
-      case 'transferred':
-        return 'bg-yellow-500';
-      case 'voicemail':
-        return 'bg-gray-500';
-      default:
-        return 'bg-gray-500';
-    }
-  };
-
-  const getSentimentIcon = (sentiment) => {
-    switch (sentiment) {
-      case 'positive':
-        return <CheckCircle className="h-4 w-4 text-green-500" />;
-      case 'negative':
-        return <XCircle className="h-4 w-4 text-red-500" />;
-      default:
-        return <div className="h-4 w-4 rounded-full bg-gray-300" />;
-    }
-  };
-
   return (
     <ClientLayout>
       <div className="space-y-6">
         <div>
           <h1 className="text-3xl font-bold">AI Virtual Receptionist</h1>
-          <p className="text-muted-foreground">Manage your AI receptionist and view call history</p>
+          <p className="text-muted-foreground">Test and manage your AI phone receptionist</p>
         </div>
 
-        <Tabs defaultValue="history" className="w-full">
+        <Tabs defaultValue="test" className="w-full">
           <TabsList>
-            <TabsTrigger value="history">Call History</TabsTrigger>
-            <TabsTrigger value="performance">Performance</TabsTrigger>
+            <TabsTrigger value="test">Test Call</TabsTrigger>
+            <TabsTrigger value="calls">Recent Calls</TabsTrigger>
             <TabsTrigger value="settings">Settings</TabsTrigger>
           </TabsList>
 
-          {/* Call History */}
-          <TabsContent value="history" className="space-y-4">
+          <TabsContent value="test" className="space-y-6">
             <Card>
               <CardHeader>
-                <CardTitle>Recent Calls</CardTitle>
-                <CardDescription>All calls handled by your AI receptionist</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Caller</TableHead>
-                      <TableHead>Phone</TableHead>
-                      <TableHead>Duration</TableHead>
-                      <TableHead>Outcome</TableHead>
-                      <TableHead>Sentiment</TableHead>
-                      <TableHead>Time</TableHead>
-                      <TableHead>Actions</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {mockCalls.map((call) => (
-                      <TableRow key={call.id}>
-                        <TableCell className="font-medium">{call.callerName}</TableCell>
-                        <TableCell>{call.callerNumber}</TableCell>
-                        <TableCell>
-                          <div className="flex items-center">
-                            <Clock className="mr-1 h-3 w-3" />
-                            {call.duration}
-                          </div>
-                        </TableCell>
-                        <TableCell>
-                          <Badge className={getOutcomeColor(call.outcome)}>
-                            {call.outcome.replace('-', ' ')}
-                          </Badge>
-                        </TableCell>
-                        <TableCell>
-                          {getSentimentIcon(call.sentiment)}
-                        </TableCell>
-                        <TableCell className="text-muted-foreground">{call.timestamp}</TableCell>
-                        <TableCell>
-                          <div className="flex gap-2">
-                            {call.hasRecording && (
-                              <Button variant="ghost" size="icon" title="Play recording">
-                                <Play className="h-4 w-4" />
-                              </Button>
-                            )}
-                            {call.hasTranscript && (
-                              <Button variant="ghost" size="icon" title="View transcript">
-                                <FileText className="h-4 w-4" />
-                              </Button>
-                            )}
-                          </div>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          {/* Performance Metrics */}
-          <TabsContent value="performance" className="space-y-4">
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-              <Card>
-                <CardContent className="p-6">
-                  <div className="space-y-2">
-                    <p className="text-sm font-medium text-muted-foreground">Total Calls</p>
-                    <p className="text-3xl font-bold">{stats.totalCalls}</p>
-                    <p className="text-xs text-muted-foreground">This month</p>
+                <CardTitle className="flex items-center justify-between">
+                  <span>Test Your AI Receptionist</span>
+                  <div className="flex items-center gap-2">
+                    {isCallActive ? (
+                      <Badge className="bg-green-500">Call Active</Badge>
+                    ) : isConnecting ? (
+                      <Badge className="bg-yellow-500">Connecting...</Badge>
+                    ) : (
+                      <Badge variant="secondary">Ready</Badge>
+                    )}
                   </div>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardContent className="p-6">
-                  <div className="space-y-2">
-                    <p className="text-sm font-medium text-muted-foreground">Avg Duration</p>
-                    <p className="text-3xl font-bold">{stats.avgDuration}</p>
-                    <p className="text-xs text-muted-foreground">Per call</p>
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardContent className="p-6">
-                  <div className="space-y-2">
-                    <p className="text-sm font-medium text-muted-foreground">Appointments Booked</p>
-                    <p className="text-3xl font-bold">{stats.appointmentsBooked}</p>
-                    <p className="text-xs text-muted-foreground">From calls</p>
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardContent className="p-6">
-                  <div className="space-y-2">
-                    <p className="text-sm font-medium text-muted-foreground">Resolution Rate</p>
-                    <p className="text-3xl font-bold">{stats.callResolutionRate}</p>
-                    <p className="text-xs text-muted-foreground">Calls resolved by AI</p>
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardContent className="p-6">
-                  <div className="space-y-2">
-                    <p className="text-sm font-medium text-muted-foreground">Missed Calls</p>
-                    <p className="text-3xl font-bold">{stats.missedCalls}</p>
-                    <p className="text-xs text-muted-foreground">Requires follow-up</p>
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardContent className="p-6">
-                  <div className="space-y-2">
-                    <p className="text-sm font-medium text-muted-foreground">Callback Requests</p>
-                    <p className="text-3xl font-bold">{stats.callbackRequests}</p>
-                    <p className="text-xs text-muted-foreground">Pending</p>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-
-            <Card>
-              <CardHeader>
-                <CardTitle>Performance Insights</CardTitle>
-                <CardDescription>AI performance analysis</CardDescription>
+                </CardTitle>
+                <CardDescription>
+                  Click "Start Call" to test your AI receptionist. Make sure your microphone is enabled.
+                </CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  <div className="flex items-center justify-between p-4 border rounded-lg">
-                    <div>
-                      <p className="font-medium">Peak Call Hours</p>
-                      <p className="text-sm text-muted-foreground">10 AM - 12 PM, 2 PM - 4 PM</p>
-                    </div>
-                    <Badge variant="secondary">Busiest</Badge>
+                  {/* Conversation Display */}
+                  <div className="h-80 overflow-y-auto border rounded-lg p-4 bg-muted/20">
+                    {messages.length === 0 ? (
+                      <p className="text-center text-muted-foreground mt-10">
+                        {isCallActive ? "Listening..." : "Start a call to begin testing"}
+                      </p>
+                    ) : (
+                      messages.map((msg, idx) => (
+                        <div 
+                          key={idx} 
+                          className={`mb-3 p-3 rounded-lg ${
+                            msg.role === 'assistant' 
+                              ? 'bg-blue-100 dark:bg-blue-900 ml-8' 
+                              : 'bg-gray-100 dark:bg-gray-800 mr-8'
+                          }`}
+                        >
+                          <p className="text-sm font-medium mb-1">
+                            {msg.role === 'assistant' ? '🤖 AI Receptionist' : '👤 You'}
+                          </p>
+                          <p className="text-sm">{msg.content}</p>
+                        </div>
+                      ))
+                    )}
                   </div>
-                  <div className="flex items-center justify-between p-4 border rounded-lg">
-                    <div>
-                      <p className="font-medium">Most Common Questions</p>
-                      <p className="text-sm text-muted-foreground">Business hours, pricing, availability</p>
-                    </div>
-                    <Badge variant="secondary">Top 3</Badge>
+
+                  {/* Call Controls */}
+                  <div className="flex gap-3 justify-center">
+                    <Button
+                      onClick={startCall}
+                      disabled={isCallActive || isConnecting}
+                      size="lg"
+                      className="bg-green-600 hover:bg-green-700"
+                    >
+                      <Phone className="mr-2 h-5 w-5" />
+                      {isConnecting ? 'Connecting...' : 'Start Call'}
+                    </Button>
+                    
+                    <Button
+                      onClick={stopCall}
+                      disabled={!isCallActive}
+                      size="lg"
+                      variant="destructive"
+                    >
+                      <PhoneOff className="mr-2 h-5 w-5" />
+                      End Call
+                    </Button>
+                    
+                    <Button
+                      onClick={toggleMute}
+                      disabled={!isCallActive}
+                      size="lg"
+                      variant="outline"
+                    >
+                      {isMuted ? (
+                        <>
+                          <MicOff className="mr-2 h-5 w-5" />
+                          Unmute
+                        </>
+                      ) : (
+                        <>
+                          <Mic className="mr-2 h-5 w-5" />
+                          Mute
+                        </>
+                      )}
+                    </Button>
                   </div>
-                  <div className="flex items-center justify-between p-4 border rounded-lg">
-                    <div>
-                      <p className="font-medium">Customer Satisfaction</p>
-                      <p className="text-sm text-muted-foreground">Based on sentiment analysis</p>
-                    </div>
-                    <Badge className="bg-green-500">92% Positive</Badge>
+
+                  <div className="bg-blue-50 dark:bg-blue-950 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
+                    <p className="text-sm text-blue-900 dark:text-blue-100">
+                      <strong>💡 Tip:</strong> This is a browser-based test. For real phone calls, your clients will call a dedicated phone number you configure in Vapi.
+                    </p>
                   </div>
                 </div>
               </CardContent>
             </Card>
           </TabsContent>
 
-          {/* Settings */}
-          <TabsContent value="settings" className="space-y-4">
+          <TabsContent value="calls">
             <Card>
               <CardHeader>
-                <CardTitle>AI Receptionist Settings</CardTitle>
-                <CardDescription>View your current configuration</CardDescription>
+                <CardTitle>Recent Calls</CardTitle>
+                <CardDescription>Latest calls received by your AI receptionist</CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="space-y-4">
-                  <div className="p-4 border rounded-lg">
-                    <p className="font-medium mb-2">Business Hours</p>
-                    <p className="text-sm text-muted-foreground">Monday - Friday: 9:00 AM - 5:00 PM</p>
-                    <p className="text-sm text-muted-foreground">Saturday: 9:00 AM - 1:00 PM</p>
-                    <p className="text-sm text-muted-foreground">Sunday: Closed</p>
+                {recentCalls.length === 0 ? (
+                  <p className="text-center text-muted-foreground py-8">
+                    No calls yet. Start by testing your receptionist!
+                  </p>
+                ) : (
+                  <div className="space-y-4">
+                    {recentCalls.map((call) => (
+                      <div key={call.callId} className="border rounded-lg p-4">
+                        <div className="flex justify-between items-start mb-2">
+                          <div>
+                            <p className="font-medium">{call.phoneNumber || 'Test Call'}</p>
+                            <p className="text-sm text-muted-foreground">
+                              {new Date(call.createdAt).toLocaleString()}
+                            </p>
+                          </div>
+                          <Badge>{call.status}</Badge>
+                        </div>
+                        {call.summary && (
+                          <p className="text-sm mt-2">{call.summary}</p>
+                        )}
+                      </div>
+                    ))}
                   </div>
-                  <div className="p-4 border rounded-lg">
-                    <p className="font-medium mb-2">Voice Settings</p>
-                    <p className="text-sm text-muted-foreground">Voice: Female - Professional (American accent)</p>
-                    <p className="text-sm text-muted-foreground">Speed: 1.0x | Tone: Neutral</p>
-                  </div>
-                  <div className="p-4 border rounded-lg">
-                    <p className="font-medium mb-2">Services Configured</p>
-                    <p className="text-sm text-muted-foreground">3 services, 12 FAQs, Custom greetings enabled</p>
-                  </div>
-                  <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
-                    <p className="text-sm text-blue-800">
-                      <strong>Note:</strong> To update these settings, please contact your account manager.
-                    </p>
-                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="settings">
+            <Card>
+              <CardHeader>
+                <CardTitle>Configuration</CardTitle>
+                <CardDescription>Configure your AI receptionist settings</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div>
+                  <Label>Vapi Assistant ID</Label>
+                  <Input
+                    value={assistantId}
+                    onChange={(e) => setAssistantId(e.target.value)}
+                    placeholder="Enter your Vapi Assistant ID"
+                  />
+                  <p className="text-xs text-muted-foreground mt-1">
+                    Get this from your Vapi dashboard after creating an assistant
+                  </p>
+                </div>
+
+                <div className="bg-yellow-50 dark:bg-yellow-950 border border-yellow-200 dark:border-yellow-800 rounded-lg p-4">
+                  <p className="text-sm text-yellow-900 dark:text-yellow-100">
+                    <strong>⚙️ Setup Required:</strong> Follow the VAPI_SETUP_GUIDE.md in your project to:
+                  </p>
+                  <ul className="text-sm text-yellow-900 dark:text-yellow-100 list-disc ml-5 mt-2">
+                    <li>Create your AI assistant in Vapi dashboard</li>
+                    <li>Configure voice, prompts, and functions</li>
+                    <li>Get your Assistant ID</li>
+                    <li>Purchase a phone number for real calls</li>
+                  </ul>
                 </div>
               </CardContent>
             </Card>
