@@ -7,7 +7,7 @@ import StatsCard from '@/components/StatsCard';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Users, Phone, Calendar, DollarSign, TrendingUp, Clock } from 'lucide-react';
-import { onAuthChange } from '@/lib/auth';
+// Removed Firebase auth import - now using localStorage
 
 export default function AdminDashboard() {
   const router = useRouter();
