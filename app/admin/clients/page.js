@@ -15,16 +15,15 @@ export default function ClientsPage() {
   const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
-    const unsubscribe = onAuthChange((currentUser) => {
-      if (!currentUser) {
-        router.push('/admin/login');
-      } else {
-        setLoading(false);
-        fetchClients();
-      }
-    });
-
-    return () => unsubscribe();
+    // Check if user is logged in
+    const token = localStorage.getItem('adminToken');
+    if (!token) {
+      router.push('/admin/login');
+      return;
+    }
+    
+    setLoading(false);
+    fetchClients();
   }, [router]);
 
   const fetchClients = async () => {
