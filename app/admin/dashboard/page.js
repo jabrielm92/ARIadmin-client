@@ -43,18 +43,7 @@ export default function AdminDashboard() {
     { title: 'Avg Call Duration', value: '3m 42s', change: '-15s from last month', icon: Clock, color: 'bg-pink-500' },
   ];
 
-  useEffect(() => {
-    const unsubscribe = onAuthChange((currentUser) => {
-      if (!currentUser) {
-        router.push('/admin/login');
-      } else {
-        setUser(currentUser);
-        setLoading(false);
-      }
-    });
-
-    return () => unsubscribe();
-  }, [router]);
+  // Authentication is now handled by the useEffect above
 
   if (loading) {
     return (
