@@ -1,42 +1,15 @@
 import { NextResponse } from 'next/server';
 import { v4 as uuidv4 } from 'uuid';
-
-// Mock client credentials - hardcoded for demo
-// In production, these would be in Firestore and passwords would be hashed
-const mockClientCredentials = [
-  {
-    clientId: '5b2732a1-28a5-4dd1-a477-652d847778ce',
-    email: 'contact@abchealthcare.com',
-    password: 'client123',
-    businessName: 'ABC Healthcare'
-  },
-  {
-    clientId: 'test-client-2',
-    email: 'info@premierlegal.com',
-    password: 'client123',
-    businessName: 'Premier Legal Services'
-  },
-  {
-    clientId: 'test-client-demo',
-    email: 'client@example.com',
-    password: 'client123',
-    businessName: 'Demo Business'
-  }
-];
+import { authenticateClient } from '@/lib/db/clients';
 
 export async function POST(request) {
   try {
     const { email, password } = await request.json();
 
-    // TODO: Replace with Firebase Auth
-    // const result = await signInWithEmailAndPassword(auth, email, password);
+    // Authenticate with MongoDB
+    const client = await authenticateClient(email, password);
 
-    // Check if credentials exist
-    const clientCred = mockClientCredentials.find(
-      c => c.email === email && c.password === password
-    );
-
-    if (clientCred) {
+    if (client) {
       // Generate a simple token (in production, use JWT)
       const token = uuidv4();
 
@@ -44,9 +17,9 @@ export async function POST(request) {
         success: true,
         token,
         user: {
-          id: clientCred.clientId,
-          email: clientCred.email,
-          businessName: clientCred.businessName,
+          id: client.clientId,
+          email: client.loginEmail,
+          businessName: client.businessName,
           role: 'client'
         }
       });
@@ -57,6 +30,7 @@ export async function POST(request) {
       );
     }
   } catch (error) {
+    console.error('Login error:', error);
     return NextResponse.json(
       { success: false, error: error.message },
       { status: 500 }
