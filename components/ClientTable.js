@@ -102,6 +102,18 @@ export default function ClientTable({ clients, onRefresh }) {
                       <Edit className="mr-2 h-4 w-4" />
                       Edit
                     </DropdownMenuItem>
+                    {client.aiReceptionist && (
+                      <DropdownMenuItem onClick={() => router.push(`/admin/clients/${client.id}/ai-receptionist`)}>
+                        <Phone className="mr-2 h-4 w-4" />
+                        Configure AI Receptionist
+                      </DropdownMenuItem>
+                    )}
+                    {client.bookingAccelerator && (
+                      <DropdownMenuItem onClick={() => router.push(`/admin/clients/${client.id}/booking-accelerator`)}>
+                        <Calendar className="mr-2 h-4 w-4" />
+                        Configure Booking
+                      </DropdownMenuItem>
+                    )}
                     <DropdownMenuItem onClick={() => router.push(`/admin/clients/${client.id}`)}>
                       <Eye className="mr-2 h-4 w-4" />
                       View Details
