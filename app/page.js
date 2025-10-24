@@ -10,8 +10,8 @@ export default function HomePage() {
   const router = useRouter();
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-900 via-blue-700 to-teal-500">
-      <Card className="w-full max-w-2xl mx-4">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900">
+      <Card className="w-full max-w-2xl mx-4 shadow-2xl">
         <CardHeader className="text-center space-y-2">
           <CardTitle className="text-4xl font-bold">ARI Solutions</CardTitle>
           <CardDescription className="text-lg">
