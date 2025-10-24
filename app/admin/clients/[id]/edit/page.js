@@ -32,6 +32,11 @@ export default function EditClientPage() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [formData, setFormData] = useState(null);
+  const [generatingCredentials, setGeneratingCredentials] = useState(false);
+  const [credentials, setCredentials] = useState(null);
+  const [hasCredentials, setHasCredentials] = useState(false);
+  const [showCredentialsDialog, setShowCredentialsDialog] = useState(false);
+  const [copied, setCopied] = useState({ email: false, password: false });
 
   useEffect(() => {
     fetchClient();
