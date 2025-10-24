@@ -8,7 +8,7 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
 
-export default function AdminLogin() {
+export default function ClientLogin() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -20,7 +20,7 @@ export default function AdminLogin() {
     setLoading(true);
 
     try {
-      const response = await fetch('/api/auth/admin/login', {
+      const response = await fetch('/api/auth/client/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password })
@@ -30,14 +30,14 @@ export default function AdminLogin() {
 
       if (data.success) {
         // Store auth token
-        localStorage.setItem('adminToken', data.token);
-        localStorage.setItem('adminUser', JSON.stringify(data.user));
+        localStorage.setItem('clientToken', data.token);
+        localStorage.setItem('clientUser', JSON.stringify(data.user));
         
         toast({
           title: 'Success',
           description: 'Logged in successfully!',
         });
-        router.push('/admin/dashboard');
+        router.push('/client/dashboard');
       } else {
         toast({
           title: 'Error',
@@ -62,7 +62,7 @@ export default function AdminLogin() {
         <CardHeader className="space-y-1">
           <CardTitle className="text-3xl font-bold text-center">ARI Solutions</CardTitle>
           <CardDescription className="text-center">
-            Admin Dashboard Login
+            Client Portal Login
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -72,7 +72,7 @@ export default function AdminLogin() {
               <Input
                 id="email"
                 type="email"
-                placeholder="admin@arisolutions.com"
+                placeholder="client@company.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
@@ -95,9 +95,7 @@ export default function AdminLogin() {
           </form>
           <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-md">
             <p className="text-xs text-blue-800">
-              <strong>Demo Credentials:</strong><br />
-              Email: admin@arisolutions.com<br />
-              Password: password123
+              <strong>Note:</strong> Use the credentials provided by your account manager.
             </p>
           </div>
         </CardContent>
