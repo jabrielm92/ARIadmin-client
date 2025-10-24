@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { v4 as uuidv4 } from 'uuid';
+import { createClient, getAllClients } from '@/lib/db/clients';
 
 // Mock database - In production, this would be Firestore
 let mockClients = [
