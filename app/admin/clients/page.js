@@ -7,7 +7,6 @@ import ClientTable from '@/components/ClientTable';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Search, Plus } from 'lucide-react';
-import { onAuthChange } from '@/lib/auth';
 
 export default function ClientsPage() {
   const router = useRouter();
