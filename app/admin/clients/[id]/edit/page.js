@@ -40,7 +40,69 @@ export default function EditClientPage() {
 
   useEffect(() => {
     fetchClient();
+    checkExistingCredentials();
   }, [params.id]);
+
+  const checkExistingCredentials = async () => {
+    try {
+      const response = await fetch(`/api/auth/admin/generate-credentials?clientId=${params.id}`);
+      const data = await response.json();
+      if (data.success && data.hasCredentials) {
+        setHasCredentials(true);
+      }
+    } catch (error) {
+      console.error('Error checking credentials:', error);
+    }
+  };
+
+  const handleGenerateCredentials = async () => {
+    setGeneratingCredentials(true);
+    try {
+      const response = await fetch('/api/auth/admin/generate-credentials', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          clientId: params.id,
+          email: formData.email,
+          businessName: formData.businessName
+        })
+      });
+
+      const data = await response.json();
+      if (data.success) {
+        setCredentials(data.credentials);
+        setHasCredentials(true);
+        setShowCredentialsDialog(true);
+        toast({
+          title: 'Success',
+          description: 'Client login credentials generated!',
+        });
+      } else {
+        toast({
+          title: 'Error',
+          description: data.error || 'Failed to generate credentials',
+          variant: 'destructive',
+        });
+      }
+    } catch (error) {
+      toast({
+        title: 'Error',
+        description: 'An error occurred',
+        variant: 'destructive',
+      });
+    }
+    setGeneratingCredentials(false);
+  };
+
+  const copyToClipboard = (text, field) => {
+    navigator.clipboard.writeText(text);
+    setCopied({ ...copied, [field]: true });
+    setTimeout(() => setCopied({ ...copied, [field]: false }), 2000);
+    toast({
+      title: 'Copied!',
+      description: `${field} copied to clipboard`,
+    });
+  };
 
   const fetchClient = async () => {
     try {
