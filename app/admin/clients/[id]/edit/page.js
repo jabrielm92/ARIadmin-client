@@ -212,6 +212,61 @@ export default function EditClientPage() {
                 Configure AI Receptionist
               </Button>
             )}
+            
+            {/* Generate Client Login Dialog */}
+            <Dialog open={showCredentialsDialog} onOpenChange={setShowCredentialsDialog}>
+              <DialogTrigger asChild>
+                <Button variant="outline" onClick={hasCredentials ? () => setShowCredentialsDialog(true) : handleGenerateCredentials} disabled={generatingCredentials}>
+                  <Key className="mr-2 h-4 w-4" />
+                  {hasCredentials ? 'View Login Info' : (generatingCredentials ? 'Generating...' : 'Generate Client Login')}
+                </Button>
+              </DialogTrigger>
+              {credentials && (
+                <DialogContent className="sm:max-w-md">
+                  <DialogHeader>
+                    <DialogTitle>Client Login Credentials</DialogTitle>
+                    <DialogDescription>
+                      Share these credentials with your client securely. They can use these to access their portal.
+                    </DialogDescription>
+                  </DialogHeader>
+                  <div className="space-y-4 py-4">
+                    <div className="space-y-2">
+                      <Label>Login URL</Label>
+                      <div className="flex items-center space-x-2">
+                        <Input value={credentials.loginUrl} readOnly />
+                        <Button size="icon" variant="ghost" onClick={() => copyToClipboard(credentials.loginUrl, 'Login URL')}>
+                          {copied['Login URL'] ? <CheckCircle className="h-4 w-4 text-green-500" /> : <Copy className="h-4 w-4" />}
+                        </Button>
+                      </div>
+                    </div>
+                    <div className="space-y-2">
+                      <Label>Email</Label>
+                      <div className="flex items-center space-x-2">
+                        <Input value={credentials.email} readOnly />
+                        <Button size="icon" variant="ghost" onClick={() => copyToClipboard(credentials.email, 'Email')}>
+                          {copied.email ? <CheckCircle className="h-4 w-4 text-green-500" /> : <Copy className="h-4 w-4" />}
+                        </Button>
+                      </div>
+                    </div>
+                    <div className="space-y-2">
+                      <Label>Password</Label>
+                      <div className="flex items-center space-x-2">
+                        <Input value={credentials.password} readOnly type="text" className="font-mono" />
+                        <Button size="icon" variant="ghost" onClick={() => copyToClipboard(credentials.password, 'Password')}>
+                          {copied.password ? <CheckCircle className="h-4 w-4 text-green-500" /> : <Copy className="h-4 w-4" />}
+                        </Button>
+                      </div>
+                    </div>
+                    <div className="p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+                      <p className="text-sm text-yellow-800">
+                        <strong>Important:</strong> Save these credentials securely. The password cannot be retrieved later.
+                      </p>
+                    </div>
+                  </div>
+                </DialogContent>
+              )}
+            </Dialog>
+            
             <AlertDialog>
             <AlertDialogTrigger asChild>
               <Button variant="destructive">
