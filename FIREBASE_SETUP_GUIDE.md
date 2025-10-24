@@ -138,7 +138,7 @@ yarn dev
 
 ### Test Admin Login
 
-1. Open your browser to: `https://clienthub-37.preview.emergentagent.com`
+1. Open your browser to: `https://client-mgmt-portal-2.preview.emergentagent.com`
 2. Click **"Admin Login"**
 3. Enter your admin credentials:
    - Email: The email you created in Step 2
