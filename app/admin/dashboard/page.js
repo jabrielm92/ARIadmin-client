@@ -14,6 +14,25 @@ export default function AdminDashboard() {
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState(null);
 
+  useEffect(() => {
+    // Check if user is logged in
+    const token = localStorage.getItem('adminToken');
+    const userStr = localStorage.getItem('adminUser');
+    
+    if (!token || !userStr) {
+      router.push('/admin/login');
+      return;
+    }
+    
+    try {
+      const userData = JSON.parse(userStr);
+      setUser(userData);
+      setLoading(false);
+    } catch (error) {
+      router.push('/admin/login');
+    }
+  }, [router]);
+
   // Mock stats data
   const stats = [
     { title: 'Total Clients', value: '24', change: '+3 this month', icon: Users, color: 'bg-blue-500' },
