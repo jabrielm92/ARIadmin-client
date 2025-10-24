@@ -138,7 +138,13 @@ export default function EditClientPage() {
             <h1 className="text-3xl font-bold">Edit Client</h1>
             <p className="text-muted-foreground">Update client information</p>
           </div>
-          <AlertDialog>
+          <div className="flex gap-2">
+            {formData.aiReceptionist && (
+              <Button variant="outline" onClick={() => router.push(`/admin/clients/${params.id}/ai-receptionist`)}>
+                Configure AI Receptionist
+              </Button>
+            )}
+            <AlertDialog>
             <AlertDialogTrigger asChild>
               <Button variant="destructive">
                 <Trash2 className="mr-2 h-4 w-4" />
