@@ -102,7 +102,7 @@
 # Testing Data - Main Agent and testing sub agent both should log testing data below this section
 #====================================================================================================
 
-user_problem_statement: "Implement lead actions functionality in client leads page and enhance homepage with features showcase and CRM connectivity"
+user_problem_statement: "Build complete Lead Generation Service for both admin and client sides with campaign management, lead capture forms, and admin oversight capabilities"
 
 frontend:
   - task: "Lead Actions Dialog with Call, Email, Notes, Status tabs"
