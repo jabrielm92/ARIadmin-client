@@ -256,7 +256,7 @@ export default function ClientBookingAccelerator() {
                   </div>
                   <div className="p-4 border rounded-lg">
                     <p className="font-medium mb-2">Public URL</p>
-                    <p className="text-sm text-blue-600">https://client-mgmt-portal-2.preview.emergentagent.com/book/your-business</p>
+                    <p className="text-sm text-blue-600">https://clienthub-39.preview.emergentagent.com/book/your-business</p>
                   </div>
                   <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
                     <p className="text-sm text-blue-800">

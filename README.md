@@ -121,7 +121,7 @@ sudo supervisorctl restart nextjs
 
 ### 3. Test the Application
 
-1. Open your browser to: `https://client-mgmt-portal-2.preview.emergentagent.com`
+1. Open your browser to: `https://clienthub-39.preview.emergentagent.com`
 2. Click "Admin Login"
 3. Login with your Firebase admin credentials
 4. You should see the dashboard with mock data
