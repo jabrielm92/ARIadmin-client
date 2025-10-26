@@ -1,20 +1,11 @@
 import { NextResponse } from 'next/server';
-
-// Mock database reference (imported from main route)
-import { GET as getAllClients } from '../route';
+import { getClientById, updateClient, deleteClient } from '@/lib/db/clients';
 
 // GET - Get single client
 export async function GET(request, { params }) {
   try {
     const { id } = params;
-    
-    // TODO: Replace with Firestore query
-    // const result = await getClient(id);
-    
-    // For now, get from mock data
-    const allClientsResponse = await getAllClients();
-    const allClients = await allClientsResponse.json();
-    const client = allClients.clients.find(c => c.id === id);
+    const client = await getClientById(id);
     
     if (!client) {
       return NextResponse.json(
@@ -28,6 +19,7 @@ export async function GET(request, { params }) {
       client
     });
   } catch (error) {
+    console.error('Error fetching client:', error);
     return NextResponse.json(
       { success: false, error: error.message },
       { status: 500 }
@@ -41,33 +33,20 @@ export async function PUT(request, { params }) {
     const { id } = params;
     const data = await request.json();
     
-    // TODO: Replace with Firestore update
-    // const result = await updateClient(id, data);
+    const success = await updateClient(id, data);
     
-    // For mock: Find and update client
-    const allClientsResponse = await getAllClients();
-    const allClients = await allClientsResponse.json();
-    const clientIndex = allClients.clients.findIndex(c => c.id === id);
-    
-    if (clientIndex === -1) {
+    if (!success) {
       return NextResponse.json(
-        { success: false, error: 'Client not found' },
+        { success: false, error: 'Client not found or update failed' },
         { status: 404 }
       );
     }
     
-    // Update client data
-    allClients.clients[clientIndex] = {
-      ...allClients.clients[clientIndex],
-      ...data,
-      updatedAt: new Date().toISOString()
-    };
-    
     return NextResponse.json({
-      success: true,
-      client: allClients.clients[clientIndex]
+      success: true
     });
   } catch (error) {
+    console.error('Error updating client:', error);
     return NextResponse.json(
       { success: false, error: error.message },
       { status: 500 }
@@ -80,27 +59,20 @@ export async function DELETE(request, { params }) {
   try {
     const { id } = params;
     
-    // TODO: Replace with Firestore deletion
-    // const result = await deleteClient(id);
+    const success = await deleteClient(id);
     
-    // For mock: Remove client from array
-    const allClientsResponse = await getAllClients();
-    const allClients = await allClientsResponse.json();
-    const clientIndex = allClients.clients.findIndex(c => c.id === id);
-    
-    if (clientIndex === -1) {
+    if (!success) {
       return NextResponse.json(
-        { success: false, error: 'Client not found' },
+        { success: false, error: 'Client not found or delete failed' },
         { status: 404 }
       );
     }
-    
-    allClients.clients.splice(clientIndex, 1);
     
     return NextResponse.json({
       success: true
     });
   } catch (error) {
+    console.error('Error deleting client:', error);
     return NextResponse.json(
       { success: false, error: error.message },
       { status: 500 }
