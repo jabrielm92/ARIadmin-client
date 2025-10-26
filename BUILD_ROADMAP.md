@@ -539,11 +539,11 @@
 **Timeline:** 2-3 days  
 **Completion:** 92% → 97%
 
-### 6.1 Stripe Integration
+### 6.1 PayPal Integration
 **Goal:** Handle subscriptions and billing
 
 **Features:**
-- [ ] Connect Stripe account
+- [ ] Connect PayPal Business account
 - [ ] Subscription plans (Basic, Pro, Enterprise)
 - [ ] Usage-based billing (per minute, per lead)
 - [ ] Invoice generation
@@ -551,15 +551,16 @@
 - [ ] Billing history
 - [ ] Auto-charge on renewal
 - [ ] Failed payment handling
+- [ ] PayPal checkout integration
 
 **Files to Create:**
 - `/app/app/admin/billing/page.js`
 - `/app/app/client/billing/page.js`
-- `/app/app/api/stripe/webhook/route.js`
-- `/app/lib/stripe-config.js`
+- `/app/app/api/paypal/webhook/route.js`
+- `/app/lib/paypal-config.js`
 
 **Integration Guide:**
-- Use integration_playbook_expert_nextjs for Stripe
+- Use integration_playbook_expert_nextjs for PayPal
 
 ---
 
