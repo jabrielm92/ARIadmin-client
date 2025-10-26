@@ -5,7 +5,10 @@ import { getClientById, updateClient, deleteClient } from '@/lib/db/clients';
 export async function GET(request, { params }) {
   try {
     const { id } = params;
+    console.log('Fetching client with ID:', id);
+    
     const client = await getClientById(id);
+    console.log('Client found:', client ? 'yes' : 'no');
     
     if (!client) {
       return NextResponse.json(
