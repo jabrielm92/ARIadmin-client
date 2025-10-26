@@ -6,9 +6,9 @@ import AdminLayout from '@/components/AdminLayout';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { ArrowLeft, Calendar, Globe, FileText, TrendingUp, ExternalLink, Settings } from 'lucide-react';
+import { ArrowLeft, TrendingUp, Mail, Zap, Target, ExternalLink, Settings } from 'lucide-react';
 
-export default function AdminBookingAcceleratorPage() {
+export default function AdminLeadGenPage() {
   const params = useParams();
   const router = useRouter();
   const [loading, setLoading] = useState(true);
@@ -54,9 +54,8 @@ export default function AdminBookingAcceleratorPage() {
     );
   }
 
-  const isEnabled = client.services?.bookingAccelerator?.enabled;
-  const isSetupComplete = client.services?.bookingAccelerator?.setupComplete;
-  const landingPageUrl = client.services?.bookingAccelerator?.landingPageUrl;
+  const isEnabled = client.services?.leadGen?.enabled;
+  const isSetupComplete = client.services?.leadGen?.setupComplete;
 
   return (
     <AdminLayout>
@@ -72,7 +71,7 @@ export default function AdminBookingAcceleratorPage() {
               <ArrowLeft className="h-5 w-5" />
             </Button>
             <div>
-              <h1 className="text-3xl font-bold">Appointment Booking Accelerator</h1>
+              <h1 className="text-3xl font-bold">ARI Lead Gen Service</h1>
               <p className="text-muted-foreground">{client.businessName}</p>
             </div>
           </div>
@@ -99,10 +98,10 @@ export default function AdminBookingAcceleratorPage() {
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-muted-foreground">Landing Pages</p>
+                  <p className="text-sm font-medium text-muted-foreground">Campaigns</p>
                   <p className="text-2xl font-bold">0</p>
                 </div>
-                <Globe className="h-8 w-8 text-blue-500" />
+                <Mail className="h-8 w-8 text-blue-500" />
               </div>
             </CardContent>
           </Card>
@@ -111,10 +110,10 @@ export default function AdminBookingAcceleratorPage() {
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-muted-foreground">Appointments</p>
+                  <p className="text-sm font-medium text-muted-foreground">Leads Generated</p>
                   <p className="text-2xl font-bold">0</p>
                 </div>
-                <Calendar className="h-8 w-8 text-purple-500" />
+                <TrendingUp className="h-8 w-8 text-purple-500" />
               </div>
             </CardContent>
           </Card>
@@ -126,7 +125,7 @@ export default function AdminBookingAcceleratorPage() {
                   <p className="text-sm font-medium text-muted-foreground">Conversion Rate</p>
                   <p className="text-2xl font-bold">0%</p>
                 </div>
-                <TrendingUp className="h-8 w-8 text-orange-500" />
+                <Target className="h-8 w-8 text-orange-500" />
               </div>
             </CardContent>
           </Card>
@@ -135,21 +134,21 @@ export default function AdminBookingAcceleratorPage() {
         {/* Coming Soon Notice */}
         <Card className="border-2 border-dashed">
           <CardContent className="p-12 text-center">
-            <Calendar className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
-            <h2 className="text-2xl font-bold mb-2">Phase 3: Coming Soon</h2>
+            <Zap className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
+            <h2 className="text-2xl font-bold mb-2">Phase 4: Coming Soon</h2>
             <p className="text-muted-foreground mb-6">
-              The Appointment Booking Accelerator will be implemented in Phase 3.
+              The ARI Lead Gen Service will be implemented in Phase 4.
             </p>
             <p className="text-sm text-muted-foreground">
               Features will include:
             </p>
             <ul className="text-sm text-muted-foreground mt-4 space-y-2 max-w-md mx-auto">
-              <li>• Landing page builder with templates</li>
-              <li>• Custom form builder for lead capture</li>
-              <li>• Calendar integration (Google, Outlook, Calendly)</li>
-              <li>• Lead qualification & scoring</li>
-              <li>• Automated follow-up campaigns</li>
-              <li>• Analytics & conversion tracking</li>
+              <li>• Campaign builder & management</li>
+              <li>• Multi-channel outreach (Email, SMS, LinkedIn)</li>
+              <li>• Lead scoring & qualification</li>
+              <li>• Nurturing workflows & automation</li>
+              <li>• Lead enrichment & segmentation</li>
+              <li>• Analytics & ROI tracking</li>
             </ul>
           </CardContent>
         </Card>
@@ -158,11 +157,11 @@ export default function AdminBookingAcceleratorPage() {
         <Card>
           <CardHeader>
             <CardTitle>Client Access</CardTitle>
-            <CardDescription>Client configuration portal (will be available in Phase 3)</CardDescription>
+            <CardDescription>Client configuration portal (will be available in Phase 4)</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="flex items-center justify-between p-3 bg-muted rounded-lg">
-              <span className="text-sm font-mono">/client/booking-accelerator</span>
+              <span className="text-sm font-mono">/client/lead-gen</span>
               <Button variant="ghost" size="sm" disabled>
                 <ExternalLink className="h-4 w-4" />
               </Button>
