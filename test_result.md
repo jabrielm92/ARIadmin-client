@@ -105,42 +105,102 @@
 user_problem_statement: "Build complete Lead Generation Service for both admin and client sides with campaign management, lead capture forms, and admin oversight capabilities"
 
 frontend:
-  - task: "Lead Actions Dialog with Call, Email, Notes, Status tabs"
+  - task: "Client Lead Gen Dashboard"
     implemented: true
-    working: true
-    file: "/app/app/client/leads/page.js"
+    working: "NA"
+    file: "/app/app/client/lead-gen/page.js"
     stuck_count: 0
     priority: "high"
-    needs_retesting: false
+    needs_retesting: true
     status_history:
-        - working: true
+        - working: "NA"
           agent: "main"
-          comment: "Implemented comprehensive lead actions dialog with tabs for Details, Call, Email, Notes, and Status. Each tab has specific functionality - Call shows phone number and initiate call button, Email has full email form, Notes has textarea for adding notes, Status allows changing lead status. All actions show placeholder alerts for integration points."
+          comment: "Created main Lead Gen dashboard for clients with campaign stats overview, quick action cards for creating campaigns/viewing leads/analytics, and active campaigns list with performance metrics. Shows empty state when no campaigns exist."
   
-  - task: "Homepage Enhancement with Features and CRM Integrations"
+  - task: "Client Campaigns List Page"
     implemented: true
-    working: true
-    file: "/app/app/page.js"
+    working: "NA"
+    file: "/app/app/client/lead-gen/campaigns/page.js"
     stuck_count: 0
     priority: "high"
-    needs_retesting: false
+    needs_retesting: true
     status_history:
-        - working: true
+        - working: "NA"
           agent: "main"
-          comment: "Completely redesigned homepage with professional landing page design. Removed admin login card and added subtle admin button in header. Created hero section with AI technology image, feature cards showcasing AI Virtual Receptionist, Appointment Booking, Lead Management, and Analytics. Added integrations section showing Salesforce, HubSpot, Calendly, Google Calendar, Twilio, SendGrid. Included value proposition cards and CTA section. Used images from vision_expert_agent."
-
-backend:
-  - task: "Client Login Mock Credentials Update"
+          comment: "Created campaigns management page with search/filter capabilities, stats summary (total, active, paused, draft campaigns), and full campaigns table with actions (view, edit, delete). Integrated with campaign API."
+  
+  - task: "New Campaign Creation Wizard"
     implemented: true
-    working: true
-    file: "/app/app/api/auth/client/login/route.js"
+    working: "NA"
+    file: "/app/app/client/lead-gen/campaigns/new/page.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "main"
+          comment: "Built comprehensive campaign creation wizard with sections: Basic Info (name, description, type), Target Audience (industry, company size, budget), Lead Magnet (type, title, description), Form Configuration (submit text, success message), Auto-responder (email subject/body with variable support), and Settings (lead scoring, auto-qualify, notifications). Has Save Draft and Publish options."
+  
+  - task: "Admin Client Lead Gen Management"
+    implemented: true
+    working: "NA"
+    file: "/app/app/admin/clients/[id]/lead-gen/page.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "main"
+          comment: "Created admin page to manage client's Lead Gen service with tabs: Overview (campaign performance, quick actions), Campaigns (full campaign list table), and Settings (enable/disable lead gen, auto scoring, email notifications, campaign limits, lead assignment). Replaced placeholder 'Coming Soon' content with full functionality."
+  
+  - task: "Admin Client Leads Page"
+    implemented: true
+    working: "NA"
+    file: "/app/app/admin/clients/[id]/leads/page.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "main"
+          comment: "Created admin page to view/manage all leads for a specific client. Shows lead stats (total, new, qualified, converted), searchable/filterable leads table, and lead detail dialog. Currently uses mock data for demonstration."
+  
+  - task: "Client Layout Navigation Update"
+    implemented: true
+    working: "NA"
+    file: "/app/components/ClientLayout.js"
     stuck_count: 0
     priority: "medium"
-    needs_retesting: false
+    needs_retesting: true
     status_history:
-        - working: true
+        - working: "NA"
           agent: "main"
-          comment: "Added client@example.com / client123 to mock credentials for easier testing. Login now works properly with demo credentials."
+          comment: "Added 'Lead Generation' menu item with Target icon to client navigation sidebar, positioned between Booking Accelerator and Leads for logical flow."
+
+backend:
+  - task: "Campaign Database Model"
+    implemented: true
+    working: "NA"
+    file: "/app/lib/db/campaigns.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "main"
+          comment: "Created complete campaigns database utility with functions: createCampaign (with full campaign schema including target audience, lead magnet, form config, auto-responder, stats, settings), getCampaignById, getAllCampaigns (with optional clientId filter), updateCampaign, deleteCampaign, updateCampaignStats, publishCampaign, pauseCampaign. Uses UUID for IDs."
+  
+  - task: "Campaign API Routes"
+    implemented: true
+    working: "NA"
+    file: "/app/app/api/client/lead-gen/campaigns/route.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "main"
+          comment: "Created API routes for campaigns: GET (fetch all campaigns for a client with clientId query param), POST (create new campaign with validation for clientId and name). Returns success/error responses with proper status codes."
 
 metadata:
   created_by: "main_agent"
