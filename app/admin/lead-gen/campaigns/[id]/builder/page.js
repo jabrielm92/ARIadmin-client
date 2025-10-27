@@ -547,6 +547,6 @@ export default function LandingPageBuilder() {
           </TabsContent>
         </Tabs>
       </div>
-    </ClientLayout>
+    </AdminLayout>
   );
 }
