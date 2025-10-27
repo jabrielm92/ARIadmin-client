@@ -228,7 +228,7 @@ export default function LandingPageBuilder() {
   }
 
   return (
-    <ClientLayout>
+    <AdminLayout>
       <div className="space-y-6 max-w-6xl mx-auto">
         {/* Header */}
         <div className="flex items-center gap-4">
