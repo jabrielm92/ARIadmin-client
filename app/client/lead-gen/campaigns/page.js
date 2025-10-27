@@ -9,7 +9,7 @@ import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Plus, Search, Eye, Edit, PlayCircle, PauseCircle, Copy, Trash2 } from 'lucide-react';
+import { Plus, Search, Eye, Edit, PlayCircle, PauseCircle, Copy, Trash2, Paintbrush } from 'lucide-react';
 
 export default function ClientCampaignsPage() {
   const router = useRouter();
