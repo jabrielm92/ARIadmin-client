@@ -14,8 +14,7 @@ import {
   Settings,
   LogOut,
   Menu,
-  X,
-  Target
+  X
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
