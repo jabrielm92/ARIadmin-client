@@ -314,6 +314,14 @@ export default function AdminLeadGenDashboard() {
 
             {/* Quick Actions */}
             <div className="grid gap-4 md:grid-cols-3">
+              <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => router.push('/admin/lead-gen/campaigns/new')}>
+                <CardHeader>
+                  <Plus className="h-10 w-10 text-blue-500 mb-2" />
+                  <CardTitle className="text-lg">Create Campaign</CardTitle>
+                  <CardDescription>Set up new campaign for a client</CardDescription>
+                </CardHeader>
+              </Card>
+
               <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => router.push('/admin/clients')}>
                 <CardHeader>
                   <Users className="h-10 w-10 text-blue-500 mb-2" />
