@@ -229,6 +229,14 @@ export default function ClientCampaignsPage() {
                           <Button 
                             variant="ghost" 
                             size="sm"
+                            onClick={() => router.push(`/client/lead-gen/campaigns/${campaign.id}/builder`)}
+                            title="Landing Page Builder"
+                          >
+                            <Paintbrush className="h-4 w-4" />
+                          </Button>
+                          <Button 
+                            variant="ghost" 
+                            size="sm"
                             onClick={() => router.push(`/client/lead-gen/campaigns/${campaign.id}`)}
                           >
                             <Eye className="h-4 w-4" />
