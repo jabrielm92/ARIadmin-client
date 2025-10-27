@@ -29,10 +29,9 @@ export default function ClientLayout({ children }) {
 
   const menuItems = [
     { name: 'Dashboard', icon: LayoutDashboard, path: '/client/dashboard' },
+    { name: 'Leads', icon: Users, path: '/client/leads' },
     { name: 'AI Receptionist', icon: Phone, path: '/client/ai-receptionist' },
     { name: 'Booking Accelerator', icon: Calendar, path: '/client/booking-accelerator' },
-    { name: 'Lead Generation', icon: Target, path: '/client/lead-gen' },
-    { name: 'Leads', icon: Users, path: '/client/leads' },
     { name: 'Analytics', icon: BarChart3, path: '/client/analytics' },
     { name: 'Settings', icon: Settings, path: '/client/settings' },
   ];
