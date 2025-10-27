@@ -12,7 +12,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { 
   Target, TrendingUp, Users, DollarSign, Eye, Edit, PlayCircle, 
-  PauseCircle, Search, BarChart3, AlertCircle, CheckCircle, XCircle
+  PauseCircle, Search, BarChart3, AlertCircle, CheckCircle, XCircle, Plus
 } from 'lucide-react';
 
 export default function AdminLeadGenDashboard() {
