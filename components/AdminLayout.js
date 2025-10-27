@@ -29,6 +29,7 @@ export default function AdminLayout({ children }) {
   const menuItems = [
     { name: 'Dashboard', icon: LayoutDashboard, path: '/admin/dashboard' },
     { name: 'Clients', icon: Users, path: '/admin/clients' },
+    { name: 'Lead Generation', icon: Target, path: '/admin/lead-gen' },
     { name: 'AI Receptionist', icon: Phone, path: '/admin/ai-receptionist' },
     { name: 'Booking Accelerator', icon: Calendar, path: '/admin/booking-accelerator' },
     { name: 'Analytics', icon: BarChart3, path: '/admin/analytics' },
